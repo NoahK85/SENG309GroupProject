@@ -1,5 +1,19 @@
 #from sklearn.externals
 import joblib
+from sklearn import tree
+import pandas as pd
+
+#train decision tree
+csvPd = pd.read_csv('normalized_weather_data.csv')
+#make array of 'labels', or independent variables
+labels = []
+for i in range(csvPd.get('Temperature').size):
+    labels.append([csvPd.get('Temperature')[i], csvPd.get('Humidity')[i], csvPd.get('Wind Speed')[i]])
+
+#the y is a list of dependent variables
+X, y = [labels, csvPd.get('Weather Type')]
+clf = tree.DecisionTreeClassifier()
+clf = clf.fit(X, y)
 
 #get values from input
 print("Welcome to the precipitation predictor")
@@ -25,11 +39,15 @@ weather
 ]
 # Make a prediction for each weather in the weathers array (we only have one)
 precipitation_values = model.predict(weathers)
+predicted_value      = precipitation_values[0]
+predicted_weather    = clf.predict([[weather[0], weather[1], weather[2]]])
 
-predicted_value = precipitation_values[0]
+
+
 # Print the results
-print("House details:")
+print("Weather details:")
 print(f"- {-25 + weather[0] * 134:,.5f} temperature")
 print(f"- {20 +  weather[1] * 89:,.5f} humidity")
 print(f"- {weather[2] * 48.5:,.5} wind speed")
 print(f"Estimated precipitation: {predicted_value * 100:,.2f}%")
+print("Weather type: " + predicted_weather)
