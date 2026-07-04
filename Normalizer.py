@@ -40,7 +40,7 @@ normalizedData = {
     'Weather Type': csvPd['Weather Type'].tolist()
 }
 
-# export new file
+# export new normalized file
 with open("normalized_weather_data.csv", "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f)
     w.writerow(normalizedData.keys())
