@@ -3,64 +3,46 @@ import csv
 
 csvPd = pd.read_csv('weather_classification_data.csv')
 
-#replace with whatever columns
+# replace with whatever columns
 columnsToNormalize = ['Temperature', 'Humidity', 'Wind Speed', 'Precipitation (%)']
 
-#prepare normalizeddata
+# prepare normalizeddata
 normalizedData = {
-            'Temperature'          : [],
-            'Humidity'             : [],
-            'Wind Speed'           : [],
-            'Precipitation (%)'    : [],
-            'Cloud Cover'          : [],
-            'Atmospheric Pressure' : [],
-            'UV Index'             : [],
-            'Season'               : [],
-            'Visibility (km)'      : [],
-            'Location'             : [],
-            'Weather Type'         : []
-       
-        }
+    'Temperature': csvPd['Temperature'].tolist(),
+    'Humidity': csvPd['Humidity'].tolist(),
+    'Wind Speed': csvPd['Wind Speed'].tolist(),
+    'Precipitation (%)': csvPd['Precipitation (%)'].tolist(),
+    'Cloud Cover': csvPd['Cloud Cover'].tolist(),
+    'Atmospheric Pressure': csvPd['Atmospheric Pressure'].tolist(),
+    'UV Index': csvPd['UV Index'].tolist(),
+    'Season': csvPd['Season'].tolist(),
+    'Visibility (km)': csvPd['Visibility (km)'].tolist() if 'Visibility (km)' in csvPd else csvPd.iloc[:, 8].tolist(),
+    'Location': csvPd['Location'].tolist(),
+    'Weather Type': csvPd['Weather Type'].tolist()
+}
+
 with open("weather_classification_data.csv", "r") as csvfile:
-    for row in range(csvPd['Temperature'].size):
-            normalizedData.get('Temperature').append(csvPd.get('Temperature')[row])
-            normalizedData.get('Humidity').append(csvPd.get('Humidity')[row])
-            normalizedData.get('Wind Speed').append(csvPd.get('Wind Speed')[row])
-            normalizedData.get('Precipitation (%)').append(csvPd.get('Precipitation (%)')[row])
-            normalizedData.get('Cloud Cover').append(csvPd.get('Cloud Cover')[row])
-            normalizedData.get('Atmospheric Pressure').append(csvPd.get('Atmospheric Pressure')[row])
-            normalizedData.get('UV Index').append(csvPd.get('UV Index')[row])
-            normalizedData.get('Season').append(csvPd.get('Season')[row])
-            normalizedData.get('Visibility (km)').append(csvPd.get('Visibility (km)')[row])
-            normalizedData.get('Location').append(csvPd.get('Location')[row])
-            normalizedData.get('Weather Type').append(csvPd.get('Weather Type')[row])
-    
-    #normalize
+    # normalize
     for column in columnsToNormalize:
-        #get min and max
-        normalMin = float(csvPd[column][0])
-        normalMax = float(csvPd[column][0])
-        for row in csvPd[column]:
-            rowData = float(row)
-            if rowData > normalMax:
-                normalMax = rowData
-            if rowData < normalMin:
-                normalMin = rowData
+        # Vectorized calculation for min, max, and range
+        normalMin = float(csvPd[column].min())
+        normalMax = float(csvPd[column].max())
         normalRange = normalMax - normalMin
+
         print("Min:", normalMin)
         print("Max:", normalMax)
         print("Range:", normalRange)
-        
-        i = 0
-        #actually normalize
-        for row in csvPd[column]:
-            rowData = float(row)
-            rowData = (rowData - normalMin) / normalRange
-            normalizedData.get(column)[i] = rowData
-            i += 1
-        print (column, "normalized")
-        
-#export new file
+
+        # Vectorized operations modify the whole column data block instantly
+        if normalRange != 0:
+            csvPd[column] = (csvPd[column] - normalMin) / normalRange
+        else:
+            csvPd[column] = 0.0
+
+        normalizedData[column] = csvPd[column].tolist()
+        print(column, "normalized")
+
+# export new file
 with open("normalized_weather_data.csv", "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f)
     w.writerow(normalizedData.keys())
