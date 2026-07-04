@@ -6,7 +6,26 @@ csvPd = pd.read_csv('weather_classification_data.csv')
 # replace with whatever columns
 columnsToNormalize = ['Temperature', 'Humidity', 'Wind Speed', 'Precipitation (%)']
 
-# prepare normalizeddata
+with open("weather_classification_data.csv", "r") as csvfile:
+    # normalize
+    for column in columnsToNormalize:
+        # Vectorized calculation for min, max, and range
+        normalMin = float(csvPd[column].min())
+        normalMax = float(csvPd[column].max())
+        normalRange = normalMax - normalMin
+
+        print("Min:", normalMin)
+        print("Max:", normalMax)
+        print("Range:", normalRange)
+
+        # Vectorized operations modify the whole column data block
+        if normalRange != 0:
+            csvPd[column] = (csvPd[column] - normalMin) / normalRange
+        else:
+            csvPd[column] = 0.0
+
+        print(column, "normalized")
+
 normalizedData = {
     'Temperature': csvPd['Temperature'].tolist(),
     'Humidity': csvPd['Humidity'].tolist(),
@@ -20,27 +39,6 @@ normalizedData = {
     'Location': csvPd['Location'].tolist(),
     'Weather Type': csvPd['Weather Type'].tolist()
 }
-
-with open("weather_classification_data.csv", "r") as csvfile:
-    # normalize
-    for column in columnsToNormalize:
-        # Vectorized calculation for min, max, and range
-        normalMin = float(csvPd[column].min())
-        normalMax = float(csvPd[column].max())
-        normalRange = normalMax - normalMin
-
-        print("Min:", normalMin)
-        print("Max:", normalMax)
-        print("Range:", normalRange)
-
-        # Vectorized operations modify the whole column data block instantly
-        if normalRange != 0:
-            csvPd[column] = (csvPd[column] - normalMin) / normalRange
-        else:
-            csvPd[column] = 0.0
-
-        normalizedData[column] = csvPd[column].tolist()
-        print(column, "normalized")
 
 # export new file
 with open("normalized_weather_data.csv", "w", newline="", encoding="utf-8") as f:
