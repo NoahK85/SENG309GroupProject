@@ -8,7 +8,8 @@ csvPd = pd.read_csv('normalized_weather_data.csv')
 #make array of 'labels', or independent variables
 labels = []
 for i in range(csvPd.get('Temperature').size):
-    labels.append([csvPd.get('Temperature')[i], csvPd.get('Humidity')[i], csvPd.get('Wind Speed')[i]])
+    labels.append([csvPd.get('Temperature')[i],
+                   csvPd.get('Humidity')[i], csvPd.get('Wind Speed')[i]])
 
 #the y is a list of dependent variables
 X, y = [labels, csvPd.get('Weather Type')]
