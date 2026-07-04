@@ -74,7 +74,7 @@ predicted_weather = str(predicted_weather_arr[0])
 dt_precip_prediction = clf_reg.predict(weathers)[0]
 
 print("\n" + "=" * 70)
-print("             EXPERT SYSTEM PERFORMANCE EVALUATION CARD")
+print("             SYSTEM PERFORMANCE EVALUATION RESULTS")
 print("=" * 70)
 
 # Batch prediction metrics for entire dataset
